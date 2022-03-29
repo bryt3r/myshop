@@ -34,15 +34,19 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
             fontFamily: 'Lato',
             colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.purple)
-                .copyWith(secondary: Colors.deepOrange)),
+                .copyWith(secondary: Colors.deepOrange),
+            textTheme: const TextTheme(
+              headline6: TextStyle(
+                color: Colors.white,
+                fontSize: 24.0,
+              ),
+            )),
         home: ProductsOverviewScreen(),
         routes: {
           ProductDetailScreen.routeName: (context) =>
               const ProductDetailScreen(),
-          CartScreen.routeName: (context) =>
-              const CartScreen(),
-          OrdersScreen.routeName: (context) =>
-              const OrdersScreen(),
+          CartScreen.routeName: (context) => const CartScreen(),
+          OrdersScreen.routeName: (context) => const OrdersScreen(),
         },
       ),
     );
