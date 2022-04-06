@@ -1,6 +1,7 @@
 // import 'package:badges/badges.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../providers/products.dart';
 import '../widgets/app_drawer.dart';
 import '../screens/cart_screen.dart';
 import '../widgets/badge.dart';
@@ -20,6 +21,24 @@ class ProductsOverviewScreen extends StatefulWidget {
 class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
   // const ProductsOverviewScreen({ Key? key }) : super(key: key);
   var _showOnlyFavorites = false;
+  var _isLoading = false;
+
+  @override
+  void initState() {
+    setState(() {
+      _isLoading = true;
+    });
+    Provider.of<Products>(context, listen: false)
+        .fetchAndSetProducts(); //init state will work due to listen: false
+    setState(() {
+      _isLoading = false;
+    });
+    //or another workAround is
+    // Future.delayed(Duration.zero).then((_) {
+    //   Provider.of<Products>(context).fetchAndSetProducts();
+    // });
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -50,11 +69,11 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
                   ]),
           Consumer<Cart>(
             child: IconButton(
-                icon: const Icon(Icons.shopping_cart),
-                onPressed: () {
-                  Navigator.of(context).pushNamed(CartScreen.routeName);
-                },
-              ),
+              icon: const Icon(Icons.shopping_cart),
+              onPressed: () {
+                Navigator.of(context).pushNamed(CartScreen.routeName);
+              },
+            ),
             builder: (ctx, cart, ch) => Badge(
               value: cart.itemCount.toString(),
               child: ch!,
@@ -63,7 +82,9 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
         ],
       ),
       drawer: const AppDrawer(),
-      body: ProductsGrid(_showOnlyFavorites),
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : ProductsGrid(_showOnlyFavorites),
     );
   }
 }
