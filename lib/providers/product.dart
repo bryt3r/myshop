@@ -1,6 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 
-class Product with ChangeNotifier{
+import 'package:http/http.dart' as http;
+
+class Product with ChangeNotifier {
   final String id;
   final String title;
   final String description;
@@ -17,8 +21,26 @@ class Product with ChangeNotifier{
     this.isFavorite = false,
   });
 
-  void toggleFavoriteStatus() {
+  void _setFavValue (bool newValue) {
+    isFavorite = newValue;
+    notifyListeners();
+  }
+
+  Future<void> toggleFavoriteStatus() async{
+    final oldStatus = isFavorite;
     isFavorite = !isFavorite;
     notifyListeners();
+    final url = Uri.parse(
+        'https://bryter-shop-default-rtdb.europe-west1.firebasedatabase.app/products/$id.json');
+    try {
+     final response = await http.patch(url, body: json.encode({
+        'isFavorite' : isFavorite,
+      }),);
+      if (response.statusCode >= 400) {
+        _setFavValue(oldStatus);
+      }
+    } on Exception catch (e) {
+      _setFavValue(oldStatus);
+    }
   }
 }
