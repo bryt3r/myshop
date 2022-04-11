@@ -25,18 +25,21 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
 
   @override
   void initState() {
-    setState(() {
+      setState(() {
       _isLoading = true;
     });
-    Provider.of<Products>(context, listen: false)
-        .fetchAndSetProducts(); //init state will work due to listen: false
-    setState(() {
+    // Provider.of<Products>(context, listen: false)
+    //     .fetchAndSetProducts(); //init state will work due to listen: false
+    // 
+    //or another workAround is
+    Future.delayed(Duration.zero).then((_) {
+      Provider.of<Products>(context, listen: false).fetchAndSetProducts().then((_) {
+         setState(() {
       _isLoading = false;
     });
-    //or another workAround is
-    // Future.delayed(Duration.zero).then((_) {
-    //   Provider.of<Products>(context).fetchAndSetProducts();
-    // });
+      });
+    });
+   
     super.initState();
   }
 
@@ -82,7 +85,7 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
         ],
       ),
       drawer: const AppDrawer(),
-      body: _isLoading
+      body:  _isLoading
           ? const Center(child: CircularProgressIndicator())
           : ProductsGrid(_showOnlyFavorites),
     );

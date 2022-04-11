@@ -9,6 +9,10 @@ import '../models/http_exception.dart';
 import './product.dart';
 
 class Products with ChangeNotifier {
+  final String authToken;
+
+  Products(this.authToken, this._items);
+
   List<Product> _items = [
     // Product(
     //   id: 'p1',
@@ -73,7 +77,7 @@ class Products with ChangeNotifier {
 
   Future<void> fetchAndSetProducts() async {
     final url = Uri.parse(
-        'https://bryter-shop-default-rtdb.europe-west1.firebasedatabase.app/products.json');
+        'https://bryter-shop-default-rtdb.europe-west1.firebasedatabase.app/products.json?auth=$authToken');
 
     try {
       final response = await http.get(url);

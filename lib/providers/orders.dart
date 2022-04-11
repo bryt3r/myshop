@@ -32,16 +32,14 @@ class Orders with ChangeNotifier {
         body: json.encode({
           'amount': total,
           'dateTime': timestamp,
-          'products': [
-            cartProducts
-                .map((cp) => {
-                      'id': cp.id,
-                      'title': cp.title,
-                      'quantity': cp.quantity,
-                      'price': cp.price,
-                    })
-                .toList()
-          ]
+          'products': cartProducts
+              .map((cp) => {
+                    'id': cp.id,
+                    'title': cp.title,
+                    'quantity': cp.quantity,
+                    'price': cp.price,
+                  })
+              .toList()
         }));
     _orders.insert(
         0,
@@ -64,18 +62,22 @@ class Orders with ChangeNotifier {
       return;
     }
     extractedData.forEach((orderId, orderData) {
-      loadedOrders.add(OrderItem(
-        id: orderId,
-        amount: orderData['amount'],
-        products: (orderData['products'] as List<dynamic>)
-            .map((item) => CartItem(
-                id: item['id'],
-                title: item['title'],
-                quantity: item['quantity'],
-                price: item['price']))
-            .toList(),
-        dateTime: DateTime.parse(orderData['dateTime']),
-      ));
+      loadedOrders.add(
+        OrderItem(
+          id: orderId,
+          amount: orderData['amount'],
+          dateTime: DateTime.parse(orderData['dateTime']),
+          products: (orderData['products'] as List<dynamic>)
+              .map(
+                (item) => CartItem(
+                    id: item['id'],
+                    title: item['title'],
+                    quantity: item['quantity'],
+                    price: item['price']),
+              )
+              .toList(),
+        ),
+      );
     });
     _orders = loadedOrders.reversed.toList();
     notifyListeners();

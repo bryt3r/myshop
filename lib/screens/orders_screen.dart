@@ -14,7 +14,7 @@ class OrdersScreen extends StatefulWidget {
 }
 
 class _OrdersScreenState extends State<OrdersScreen> {
-   var _ordersFuture;
+   Future _ordersFuture = Future.value();
 
   Future _obtainOrdersFuture () {
     return Provider.of<Orders>(context, listen: false).fetchAndSetOrders();
@@ -44,7 +44,6 @@ class _OrdersScreenState extends State<OrdersScreen> {
             } else {
               if (dataSnapshot.error != null) {
                 //handle error
-                print(dataSnapshot.error);
                 return const Center(child: Text('An error occured'));
               } else {
                 return Consumer<Orders>(builder: (ctx, orderData, child) {
