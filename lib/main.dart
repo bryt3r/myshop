@@ -26,7 +26,11 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(
           create: (ctx) => Auth(),
         ),
-        ChangeNotifierProvider.value(value: Products()),
+        ChangeNotifierProxyProvider<Auth, Products>(
+            create: (ctxt) => Products(Provider.of<Auth>(ctxt, listen: false).token as String, []),
+            update: (ctx, auth, prevProducts) => Products(
+                auth.token!, prevProducts == null ? [] : prevProducts.items)),
+        // ChangeNotifierProvider.value(value: Products()),
         // ChangeNotifierProvider(
         //   create: (ctx) => Products(),
         // ),
@@ -51,7 +55,7 @@ class MyApp extends StatelessWidget {
                   fontSize: 24.0,
                 ),
               )),
-          home: auth.isAuth ? ProductsOverviewScreen() :AuthScreen(),
+          home: auth.isAuth ? ProductsOverviewScreen() : AuthScreen(),
           // home: ProductsOverviewScreen(),
           routes: {
             ProductDetailScreen.routeName: (ctx) => const ProductDetailScreen(),
