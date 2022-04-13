@@ -17,7 +17,7 @@ class Auth with ChangeNotifier {
   }
 
   String get userId {
-    return _userId!;
+    return _userId ?? '';
   }
 
   String? get token {
@@ -76,8 +76,9 @@ class Auth with ChangeNotifier {
     if (!prefs.containsKey('userData')) {
       return false;
     }
-    final extractedUserData = json.decode(prefs.getString('userData') as String)
-        as Map<String, Object>;
+    final extractedUserData =
+        json.decode(prefs.getString('userData')!) as Map<String, dynamic>;
+
     final expiryDate =
         DateTime.parse(extractedUserData['expiryDate'].toString());
 
@@ -89,7 +90,6 @@ class Auth with ChangeNotifier {
     _expiryDate = expiryDate;
     notifyListeners();
     _autoLogout();
-
     return true;
   }
 

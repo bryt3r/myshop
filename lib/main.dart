@@ -29,9 +29,9 @@ class MyApp extends StatelessWidget {
         ),
         ChangeNotifierProxyProvider<Auth, Products>(
             create: (ctxt) => Products(
-                Provider.of<Auth>(ctxt, listen: false).token as String,
+                Provider.of<Auth>(ctxt, listen: false).token,
                 Provider.of<Auth>(ctxt, listen: false).userId, []),
-            update: (ctx, auth, prevProducts) => Products(auth.token!,
+            update: (ctx, auth, prevProducts) => Products(auth.token,
                 auth.userId, prevProducts == null ? [] : prevProducts.items)),
         // ChangeNotifierProvider.value(value: Products()),
         // ChangeNotifierProvider(
@@ -42,9 +42,9 @@ class MyApp extends StatelessWidget {
         ),
         ChangeNotifierProxyProvider<Auth, Orders>(
             create: (ctxt) => Orders(
-                Provider.of<Auth>(ctxt, listen: false).token as String,
+                Provider.of<Auth>(ctxt, listen: false).token,
                 Provider.of<Auth>(ctxt, listen: false).userId, []),
-            update: (ctx, auth, prevOrders) => Orders(auth.token!, auth.userId,
+            update: (ctx, auth, prevOrders) => Orders(auth.token, auth.userId,
                 prevOrders == null ? [] : prevOrders.orders)),
         // ChangeNotifierProvider(
         //   create: (ctx) => Orders(),
