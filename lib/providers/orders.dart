@@ -14,10 +14,14 @@ class OrderItem {
       {required this.id,
       required this.amount,
       required this.products,
-      required this.dateTime});
+      required this.dateTime,});
 }
 
 class Orders with ChangeNotifier {
+  String authToken;
+
+  final String userId;
+  Orders(this.authToken, this.userId,this._orders);
   List<OrderItem> _orders = [];
 
   List<OrderItem> get orders {
@@ -26,7 +30,7 @@ class Orders with ChangeNotifier {
 
   Future<void> addOrder(List<CartItem> cartProducts, double total) async {
     final url = Uri.parse(
-        'https://bryter-shop-default-rtdb.europe-west1.firebasedatabase.app/orders.json');
+        'https://bryter-shop-default-rtdb.europe-west1.firebasedatabase.app/orders/$userId.json?auth=$authToken');
     final timestamp = DateTime.now().toIso8601String();
     final response = await http.post(url,
         body: json.encode({
@@ -53,7 +57,7 @@ class Orders with ChangeNotifier {
 
   Future<void> fetchAndSetOrders() async {
     final url = Uri.parse(
-        'https://bryter-shop-default-rtdb.europe-west1.firebasedatabase.app/orders.json');
+        'https://bryter-shop-default-rtdb.europe-west1.firebasedatabase.app/orders/$userId.json?auth=$authToken');
     final response = await http.get(url);
 
     final List<OrderItem> loadedOrders = [];

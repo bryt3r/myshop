@@ -10,8 +10,9 @@ import './product.dart';
 
 class Products with ChangeNotifier {
   final String authToken;
+  final String userId;
 
-  Products(this.authToken, this._items);
+  Products(this.authToken, this.userId, this._items);
 
   List<Product> _items = [
     // Product(
@@ -75,9 +76,10 @@ class Products with ChangeNotifier {
   //   notifyListeners();
   // }
 
-  Future<void> fetchAndSetProducts() async {
+  Future<void> fetchAndSetProducts([bool filterByUser = false]) async {
+    final filterString = filterByUser ? 'orderBy="creatorId"&equalTo="$userId"' : '';
     final url = Uri.parse(
-        'https://bryter-shop-default-rtdb.europe-west1.firebasedatabase.app/products.json?auth=$authToken');
+        'https://bryter-shop-default-rtdb.europe-west1.firebasedatabase.app/products.json?auth=$authToken&$filterString');
 
     try {
       final response = await http.get(url);
@@ -85,6 +87,11 @@ class Products with ChangeNotifier {
       if (extractedData == null) {
         return;
       }
+      final favUrl = Uri.parse(
+        'https://bryter-shop-default-rtdb.europe-west1.firebasedatabase.app/userFavorites/$userId.json?auth=$authToken');
+   
+      final favoriteResponse = await http.get(favUrl);
+      final favoriteData = json.decode(favoriteResponse.body);
       final List<Product> loadedProducts = [];
       extractedData.forEach((prodId, prodData) {
         loadedProducts.add(Product(
@@ -92,7 +99,7 @@ class Products with ChangeNotifier {
             title: prodData['title'],
             description: prodData['description'],
             price: prodData['price'],
-            isFavorite: prodData['isFavorite'],
+            isFavorite: favoriteData == null ? false : favoriteData[prodId] ?? false,
             imageUrl: prodData['image']));
       });
       _items = loadedProducts;
@@ -113,7 +120,7 @@ class Products with ChangeNotifier {
           'description': product.description,
           'image': product.imageUrl,
           'price': product.price,
-          'isFavorite': product.isFavorite,
+          'creatorId': userId,
         }),
       );
 
